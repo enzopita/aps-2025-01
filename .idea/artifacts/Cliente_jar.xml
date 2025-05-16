@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Cliente:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Cliente_jar</output-path>
+    <root id="archive" name="Cliente.jar">
+      <element id="module-output" name="APS" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-fonts-roboto/2.137/flatlaf-fonts-roboto-2.137.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.0/flatlaf-3.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
