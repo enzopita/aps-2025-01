@@ -102,7 +102,7 @@ public class ServerApp extends JFrame {
         // Menu de contexto para desconectar usuários
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem disconnectItem = new JMenuItem("Desconectar usuário");
-        disconnectItem.addActionListener(e -> {
+        disconnectItem.addActionListener(_ -> {
             String selectedUser = userList.getSelectedValue();
             if (selectedUser != null) {
                 int confirm = JOptionPane.showConfirmDialog(
@@ -155,8 +155,8 @@ public class ServerApp extends JFrame {
         messagePanel.add(sendButton, BorderLayout.EAST);
         chatPanel.add(messagePanel, BorderLayout.SOUTH);
 
-        sendButton.addActionListener(e -> sendServerMessage());
-        messageField.addActionListener(e -> sendServerMessage());
+        sendButton.addActionListener(_ -> sendServerMessage());
+        messageField.addActionListener(_ -> sendServerMessage());
 
         return chatPanel;
     }
@@ -171,7 +171,7 @@ public class ServerApp extends JFrame {
         JScrollPane logScroll = new JScrollPane(logArea);
 
         JButton clearButton = new JButton("Limpar Logs");
-        clearButton.addActionListener(e -> logArea.setText(""));
+        clearButton.addActionListener(_ -> logArea.setText(""));
 
         logPanel.add(logScroll, BorderLayout.CENTER);
         logPanel.add(clearButton, BorderLayout.SOUTH);
@@ -194,7 +194,7 @@ public class ServerApp extends JFrame {
         connectionsLabel.setFont(new Font("Roboto", Font.BOLD, 14));
 
         // Atualiza estatísticas periodicamente
-        new Timer(1000, e -> {
+        new Timer(1000, _ -> {
             connectionsLabel.setText("Conexões ativas: " + clients.size());
             statsInspectors.setText("Inspetores cadastrados: " + listModel.size());
         }).start();

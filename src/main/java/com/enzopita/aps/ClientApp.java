@@ -15,11 +15,9 @@ public class ClientApp extends JFrame {
     private JTextArea chatArea;
     private JTextField messageField;
     private DefaultListModel<String> userListModel;
-    private JList<String> userList;
     private PrintWriter out;
     private BufferedReader in;
-    private String clientName;
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     private JLabel statusLabel;
     private Socket socket;
 
@@ -75,7 +73,7 @@ public class ClientApp extends JFrame {
         JScrollPane chatScroll = new JScrollPane(chatArea);
 
         userListModel = new DefaultListModel<>();
-        userList = new JList<>(userListModel);
+        JList<String> userList = new JList<>(userListModel);
         userList.setFixedCellWidth(200);
         userList.setFont(new Font("Roboto", Font.PLAIN, 13));
         userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -107,8 +105,8 @@ public class ClientApp extends JFrame {
         bottomPanel.add(sendPanel, BorderLayout.CENTER);
         chatPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        sendButton.addActionListener(e -> sendMessage());
-        messageField.addActionListener(e -> sendMessage());
+        sendButton.addActionListener(_ -> sendMessage());
+        messageField.addActionListener(_ -> sendMessage());
 
         return chatPanel;
     }
@@ -178,7 +176,7 @@ public class ClientApp extends JFrame {
         formPanel.add(submitButton, gbc);
 
         // Ação do botão de enviar relatório
-        submitButton.addActionListener(e -> {
+        submitButton.addActionListener(_ -> {
             String report = String.format(
                     "RELATÓRIO: Tipo=%s | Nível=%d | Observações=%s",
                     typeCombo.getSelectedItem(),
@@ -210,9 +208,9 @@ public class ClientApp extends JFrame {
         JMenuItem disconnectItem = new JMenuItem("Desconectar");
         JMenuItem exitItem = new JMenuItem("Sair");
 
-        connectItem.addActionListener(e -> connectToServer());
-        disconnectItem.addActionListener(e -> disconnectFromServer());
-        exitItem.addActionListener(e -> System.exit(0));
+        connectItem.addActionListener(_ -> connectToServer());
+        disconnectItem.addActionListener(_ -> disconnectFromServer());
+        exitItem.addActionListener(_ -> System.exit(0));
 
         connectionMenu.add(connectItem);
         connectionMenu.add(disconnectItem);
@@ -230,7 +228,7 @@ public class ClientApp extends JFrame {
 
         if (name == null || name.trim().isEmpty()) return;
 
-        clientName = name.trim();
+        String clientName = name.trim();
 
         String serverAddress = JOptionPane.showInputDialog(this,
                 "Endereço do servidor:", "localhost");
@@ -269,9 +267,7 @@ public class ClientApp extends JFrame {
                         }
 
                         String finalResponse = response;
-                        SwingUtilities.invokeLater(() -> {
-                            chatArea.append(finalResponse + "\n");
-                        });
+                        SwingUtilities.invokeLater(() -> chatArea.append(finalResponse + "\n"));
                     }
                 } catch (IOException e) {
                     SwingUtilities.invokeLater(() -> {
