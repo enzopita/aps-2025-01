@@ -7,9 +7,14 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -21,9 +26,9 @@ public class ServerApp extends JFrame {
     private JList<String> userList;
     private DefaultListModel<String> listModel;
     private JTextField messageField;
-    private Set<ClientHandler> clients = Collections.synchronizedSet(new HashSet<>());
+    private final Set<ClientHandler> clients = Collections.synchronizedSet(new HashSet<>());
     private ServerSocket serverSocket;
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     private int messageCount = 0;
     private int pollutionAlerts = 0;
     private JLabel statsMessageCount;
@@ -34,6 +39,13 @@ public class ServerApp extends JFrame {
         setupFlatLaf();
         initUI();
         startServer();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            ServerApp server = new ServerApp();
+            server.setVisible(true);
+        });
     }
 
     private void setupFlatLaf() {
@@ -196,8 +208,8 @@ public class ServerApp extends JFrame {
     }
 
     private void disconnectUser(String username) {
-        synchronized(clients) {
-            for (Iterator<ClientHandler> iterator = clients.iterator(); iterator.hasNext();) {
+        synchronized (clients) {
+            for (Iterator<ClientHandler> iterator = clients.iterator(); iterator.hasNext(); ) {
                 ClientHandler client = iterator.next();
                 if (client.getClientName().equals(username)) {
                     try {
@@ -260,7 +272,7 @@ public class ServerApp extends JFrame {
     }
 
     void broadcast(String message, ClientHandler exclude) {
-        synchronized(clients) {
+        synchronized (clients) {
             for (ClientHandler client : clients) {
                 if (client != exclude) {
                     client.sendMessage(message);
@@ -281,7 +293,7 @@ public class ServerApp extends JFrame {
     void updateUserList() {
         SwingUtilities.invokeLater(() -> {
             listModel.clear();
-            synchronized(clients) {
+            synchronized (clients) {
                 List<String> names = new ArrayList<>();
                 for (ClientHandler client : clients) {
                     names.add(client.getClientName());
@@ -296,10 +308,10 @@ public class ServerApp extends JFrame {
 
     private class ClientHandler implements Runnable {
         public final Socket socket;
-        private PrintWriter out;
-        private BufferedReader in;
+        private final PrintWriter out;
+        private final BufferedReader in;
         private String clientName;
-        private String clientAddress;
+        private final String clientAddress;
 
         public ClientHandler(Socket socket) throws IOException {
             this.socket = socket;
@@ -362,7 +374,7 @@ public class ServerApp extends JFrame {
         }
 
         private void sendUserList() {
-            synchronized(clients) {
+            synchronized (clients) {
                 StringBuilder userList = new StringBuilder("/userlist ");
                 for (ClientHandler client : clients) {
                     userList.append(client.getClientName()).append(",");
@@ -389,12 +401,5 @@ public class ServerApp extends JFrame {
                     clientName + " saiu do chat\n");
             updateUserList();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ServerApp server = new ServerApp();
-            server.setVisible(true);
-        });
     }
 }
